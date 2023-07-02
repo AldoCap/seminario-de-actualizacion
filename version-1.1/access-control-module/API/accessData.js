@@ -1,5 +1,5 @@
 let accessData =
 {   managmentLevel: ' ',
-    name : ''
+    name : ' '
 }
 module.exports = { accessData }
