@@ -1,4 +1,5 @@
 const {userController} = require("./userController");
+const { v4: uuidv4 } = require('uuid');
 
 
 async function signInHandler(requestData, responseCallback){
@@ -18,16 +19,22 @@ async function signInHandler(requestData, responseCallback){
             responseCallback(400, responseData);
         }
         else {
-            console.log('aprobado');            
+                    
             responseData = {
                 id:validateResponse.iduser,
-                token: '',
+                token: generateUUID(),
                 message: "User and Password Correct"
+                
             }
             responseCallback(200, responseData);
         }       
     } catch (error) {
        responseCallback(400,error);
+    }
+
+    function generateUUID() {
+        
+        return uuidv4();
     }
 }
 
