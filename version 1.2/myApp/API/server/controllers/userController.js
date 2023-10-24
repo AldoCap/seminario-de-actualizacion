@@ -70,7 +70,6 @@ class userController {
 
     async validateUser(userName, userPassword) {
         console.log('Validating user');
-        //console.log(userName, userPassword);
     
         const dataBase = mysql.createConnection({
             host: '127.0.0.1',
