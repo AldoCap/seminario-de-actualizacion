@@ -47,10 +47,13 @@ class UserController {
 
             if (userFound) {
                 console.log("User validated");
-                return { validated: true };
+                const data = {
+                    status : true
+                  };
+                return data;
             } else {
                 console.log("User not found or invalid credentials");
-                return { validated: false };
+                return { status:false };
             }
         } catch (error) {
             console.error("Error validating user:", error);

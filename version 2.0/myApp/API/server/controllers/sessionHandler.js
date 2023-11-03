@@ -1,103 +1,109 @@
-const {UserController} = require("./userController");
-const {tokenHandler} = require('./tokenHandler.js');
+const { UserController } = require("./userController.js");
+const { tokenHandler } = require("./tokenHandler.js");
 
+async function signInHandler(req, res) {
+  let body = "";
 
-async function signInHandler(req, res){
+  req.on("data", (chunk) => {
+    body += chunk.toString();
+  });
 
-    let body = '';
-            
-    req.on('data', (chunk) => {
-        body += chunk.toString();
+  req.on("end", async () => {
+    try {
+      const requestData = JSON.parse(body);
 
-    });
+      let userControl = new UserController();
+      const dateUser = await userControl.validateUser(
+        requestData.userName,
+        requestData.password
+      );
 
-    req.on('end', () => {
-       
-         
-           const requestData = JSON.parse(body);
-            console.log(requestData);  
+      const data = {
+        userId: dateUser,
+        token: tokenHandler.generateToken(dateUser),
+      };
 
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({status:true,data:requestData}));
-       
-    });
-
-
-
- /*   
-   try {       
-        let userControl = new UserController();
-        const dateUser = await userControl.validateUser(requestData.userName, requestData.password);
-       
-        const validateResponse = await JSON.parse(dateUser);
-       
-        if (!validateResponse){
-            
-            responseData = {
-                id:0,
-                message: "User or Password Incorrect"
-            }          
-            //responseCallback(400, responseData);
-            responseCallback.writeHead(statusCode, { 'Content-Type': 'application/json' });
-            responseCallback.end(JSON.stringify(responseData));
-        }
-        else {
-                    
-            responseData = {
-                id:validateResponse.iduser,
-                message: "User and Password Correct",
-                token: tokenHandler.generateToken(validateResponse.iduser),
-            }
-            responseCallback(200, responseData);
-        }   console-log(validateResponse.iduser); 
+      if (dateUser) {
+        res.writeHead(200, {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        });
+        res.end(
+          JSON.stringify({
+            status: true,
+            message: "User and Password Correct",
+            data: data,
+          })
+        );
+      } else {
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({ status: false, message: "Internal Server Error" })
+        );
+      }
     } catch (error) {
-       responseCallback(400,error);
+      console.error(error);
+
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({ status: false, message: "Internal Server Error" })
+      );
     }
-    */
+  });
 }
 
+async function registerHandler(req, res) {
+  let body = "";
 
-async function registerHandler(requestData, responseCallback){
-    
-   try {      
-        let userData = {
-            'password'  : requestData.password,
-            'name'      : requestData.name,
-            'surname'   : requestData.surname,
-            'dni'       : requestData.dni,
-            'email'     : requestData.email,
-            'phone'     : requestData.phone            
-        };        
+  req.on("data", (chunk) => {
+    body += chunk.toString();
+  });
 
-        let userControl = new UserController();
-        console.log (userData.name);
-        const newUser = await userControl.createUser(userData);
-        const newUserResponse = await JSON.parse(newUser);
+  req.on("end", async () => {
+    try {
+      const requestData = JSON.parse(body);
 
-        if (newUserResponse.status === 1 ){
-            console.log('Creado Correctamente');            
-            responseData = {
-                id:newUserResponse.id,
-                token: '',
-                message: newUserResponse.message
-            }
-            responseCallback(200, responseData);            
-        }
-        else {
-            console.error("Error");  
-            responseData = {
-                id:0,
-                message: newUserResponse.message
-            }          
-            responseCallback(400, responseData);            
-        }   
-         
-        console.log(newUserResponse);
+      let userData = {
+        password: requestData.password,
+        name: requestData.name,
+        surname: requestData.surname,
+        dni: requestData.dni,
+        email: requestData.email,
+        phone: requestData.phone,
+      };
 
+      let userControl = new UserController();
+      const newUser = await userControl.createUser(userData);
+      const newUserResponse = await JSON.parse(newUser);
+
+      if (newUserResponse.status === 1) {
+        res.writeHead(200, {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        });
+
+        responseData = {
+          id: newUserResponse.id,
+          token: "",
+          message: newUserResponse.message,
+        };
+
+        res.end(JSON.stringify(responseData));
+      } else {
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({ status: false, message: "Internal Server Error" })
+        );
+      }
     } catch (error) {
-        console.log("Error");
-        responseCallback(400, error);
-    }            
+      console.error(error);
+
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({ status: false, message: "Internal Server Error" })
+      );
+    }
+  });
 }
 
-module.exports = {registerHandler, signInHandler};
+module.exports = { registerHandler, signInHandler };

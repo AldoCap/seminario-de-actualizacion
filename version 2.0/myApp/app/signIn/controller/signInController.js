@@ -31,32 +31,29 @@ class signInController{
 
     async onSignInButtonClick(event)
     {
-        //event.preventDefault();
-        
-        let InData = this.innerView.signInData()
+        this.InData = this.innerView.signInData()
         
         try {      
             
             let requestMetadata = {
                 method: "POST",
-                body:JSON.stringify(InData),
+                body:JSON.stringify(this.InData),
               };
             
             let result = await fetch ("http://localhost:3000/signIn", requestMetadata);
             
-            let jsonBody = await result.json();
-
-            console.log(jsonBody.id, "holis")
-            /*
-            if (jsonBody === true){
-                
-                localStorage.setItem('nickname', InData.nickname);
-                localStorage.setItem('id', jsonBody.id);
-                localStorage.setItem('token', 'john@example.com');
+            this.jsonBody = await result.json();
+            
+            if (this.jsonBody.data.userId.status === true)
+            {
+                console.log(this.jsonBody); 
+                localStorage.setItem('nickname', this.InData.userName);
+                localStorage.setItem('token', this.jsonBody.data.token);
                 window.dispatchEvent(new CustomEvent('signed'));
-                console.log("holis compa "); 
+           
+            }else{
+                alert("contraseña o usuario incorrecto"); 
             }
-            */  
         
         } catch (error) {
             console.log(error);
