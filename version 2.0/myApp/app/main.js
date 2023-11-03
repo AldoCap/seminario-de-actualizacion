@@ -1,4 +1,4 @@
-import { Application } from "./app/Application.js";
+import { Application } from "./Application.js";
 
 function startApplication() {
   let application = new Application();

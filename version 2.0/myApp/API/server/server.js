@@ -1,70 +1,83 @@
 const http = require('http');
+const { signInHandler } = require('../server/controllers/sessionHandler.js');
+const { registerHandler } = require('../server/controllers/sessionHandler.js');
 
 class Server {
     constructor() {
-        this.routes = {
-            GET: [],
-            POST: []
+        const { url } = require('inspector');
+        this.hostname = '127.0.0.1';
+        this.port = 3000;
+
+        const server = http.createServer(this.processRequest.bind(this));
+        server.listen(this.port, this.hostname, () => {
+            console.log(`Servidor escuchando en http://${this.hostname}:${this.port}`);
+        });
+
         };
-        this.hostname = 'localhost';
-    }
+    processRequest( request, response )
+    {
+	response.setHeader('Access-Control-Allow-Origin', '*');
+	response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+	response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    get(url, handler) {
-        this.routes.GET[url] = handler;
-    }
+	if (request.method === 'OPTIONS') 
+	{
+		response.writeHead(204).end();
+	}
+	else if ( request.method == 'GET' )
+	{
+		switch( request.url)
+		{
+			case '/login':
+				{
+					const data = { message: '[GET] /login NodeJS with CORS!' };
+					response.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+					response.end(JSON.stringify(data));
+				} break;
+			
+			case '/':
+			{
+				const data = { message: '[GET] / NodeJS with CORS!' };
+				response.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+				response.end(JSON.stringify(data));
+			} break;
 
-    post(url, handler) {
-        this.routes.POST[url] = handler;
-    }
+			default:
+			{	
+				response.writeHead(404).end();
+			};
 
-    start(port) {
-        const server = http.createServer((req, res) => {
-            this.handleRequest(req, res);
-        });
+		}
+		
+	}
+	else if ( request.method == 'POST' )
+	{
+		switch( request.url)
+		{
+			case '/':
+			{
+				const data = { message: '[POST] Hello World NodeJS with CORS!' };
+				response.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+				response.end(JSON.stringify(data));
+			}
+			break;
+		
+			case '/signIn':
+			{
+				signInHandler(request,response);
+			}
+			break;
 
-        server.listen(port, this.hostname, () => {
-            console.log(`Server running at http://${this.hostname}:${port}/`);
-        });
-    }
-
-    handleRequest(req, res) {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-        if (req.method === 'OPTIONS') {
-            res.writeHead(204).end();
-            return;
-        }
-
-        const method = req.method;
-        const url = req.url;
-        const handler = this.routes[method][url];
-
-        if (handler) {
-            let body = '';
-
-            req.on('data', (chunk) => {
-                body += chunk.toString();
-            });
-
-            req.on('end', () => {
-                try {
-                    const requestData = body ? JSON.parse(body) : {};
-                    handler(requestData, (statusCode, responseData) => {
-                        res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-                        res.end(JSON.stringify(responseData));
-                    });
-                } catch (error) {
-                    res.writeHead(400, { 'Content-Type': 'text/plain' });
-                    res.end('Bad Request');
-                }
-            });
-        } else {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('Error 404. Route not found');
-        }
-    }
+			default:
+			{
+				response.writeHead(404).end();
+			};
+		}
+	}
+	else
+	{
+		response.writeHead(404).end();
+	}
 }
-
+}
 module.exports = { Server };

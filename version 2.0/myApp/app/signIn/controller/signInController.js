@@ -16,6 +16,7 @@ class signInController{
                 case "signIn":
                     
                     this.onSignInButtonClick();
+                    
                     break;
                 
                 case "registerLink":
@@ -28,31 +29,37 @@ class signInController{
     disable()
     {}
 
-    async onSignInButtonClick()
+    async onSignInButtonClick(event)
     {
+        //event.preventDefault();
+        
         let InData = this.innerView.signInData()
         
         try {      
+            
             let requestMetadata = {
                 method: "POST",
                 body:JSON.stringify(InData),
               };
-    
-            let result = await fetch ("http://localhost:3000/signIn", requestMetadata);
-              
-            let jsonBody = await result.json();
-             
-            alert(jsonBody.message);
             
+            let result = await fetch ("http://localhost:3000/signIn", requestMetadata);
+            
+            let jsonBody = await result.json();
 
-            if (jsonBody.id < 0){
+            console.log(jsonBody.id, "holis")
+            /*
+            if (jsonBody === true){
+                
                 localStorage.setItem('nickname', InData.nickname);
                 localStorage.setItem('id', jsonBody.id);
                 localStorage.setItem('token', 'john@example.com');
                 window.dispatchEvent(new CustomEvent('signed'));
+                console.log("holis compa "); 
             }
+            */  
+        
         } catch (error) {
-            console.log("error");
+            console.log(error);
         }
     }
 

@@ -11,7 +11,7 @@ class signInView extends HTMLElement
         this.signInTitle.classList.add("title");
         this.signInTitle.textContent = "Formulario de inicio de sesión";
 
-        this.form = document.createElement('form');
+        this.form = document.createElement('div');
         this.form.classList.add("form");
         
         this.userNickNameContainer = document.createElement('div');  

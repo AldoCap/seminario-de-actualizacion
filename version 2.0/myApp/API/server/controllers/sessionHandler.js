@@ -1,12 +1,34 @@
 const {UserController} = require("./userController");
-const { v4: uuidv4 } = require('uuid');
+const {tokenHandler} = require('./tokenHandler.js');
 
 
-async function signInHandler(requestData, responseCallback){
-    
+async function signInHandler(req, res){
+
+    let body = '';
+            
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+
+    });
+
+    req.on('end', () => {
+       
+         
+           const requestData = JSON.parse(body);
+            console.log(requestData);  
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({status:true,data:requestData}));
+       
+    });
+
+
+
+ /*   
    try {       
         let userControl = new UserController();
         const dateUser = await userControl.validateUser(requestData.userName, requestData.password);
+       
         const validateResponse = await JSON.parse(dateUser);
        
         if (!validateResponse){
@@ -15,26 +37,23 @@ async function signInHandler(requestData, responseCallback){
                 id:0,
                 message: "User or Password Incorrect"
             }          
-            responseCallback(400, responseData);
+            //responseCallback(400, responseData);
+            responseCallback.writeHead(statusCode, { 'Content-Type': 'application/json' });
+            responseCallback.end(JSON.stringify(responseData));
         }
         else {
                     
             responseData = {
                 id:validateResponse.iduser,
-                token: generateUUID(),
-                message: "User and Password Correct"
-                
+                message: "User and Password Correct",
+                token: tokenHandler.generateToken(validateResponse.iduser),
             }
             responseCallback(200, responseData);
-        }       
+        }   console-log(validateResponse.iduser); 
     } catch (error) {
        responseCallback(400,error);
     }
-
-    function generateUUID() {
-        
-        return uuidv4();
-    }
+    */
 }
 
 
