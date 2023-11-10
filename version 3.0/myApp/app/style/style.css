@@ -1,0 +1,173 @@
+.form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.registerTitle {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  width: 100%;
+}
+
+/* Estilo específico para el label de "Teléfono" */
+label[for="phone"] {
+  width: 30%;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.submit {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.signin {
+  text-align: center;
+  margin-top: 20px;
+}
+
+#signInLink {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+#submitButton:hover {
+  background-color: #0056b3;
+}
+
+
+
+
+
+
+
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #060606;
+    border: 1px solid #0a0a0a;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+
+  .input-group {
+    margin-bottom: 10px;
+  }
+  
+  .input-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+  }
+  
+
+  .sign {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .sign:hover {
+    background-color: #0056b3;
+  }
+  
+  
+  .registro {
+    margin-top: 20px;
+  }
+  
+  #registerLink {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  #registerLink:hover {
+    text-decoration: underline;
+  }
+  
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.user-a-textarea,
+.user-b-textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none;
+}
+
+.user-a-input,
+.user-b-input {
+  width: calc(100% - 20px);
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.user-a-send-button,
+.user-b-send-button {
+  width: 100px;
+  font-size: 24px;
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.user-a-send-button:hover,
+.user-b-send-button:hover {
+  background-color: #45a049;
+}
