@@ -1,46 +1,37 @@
-class ChatController
-{
-    constructor(view,model)
-    {
-        this.innerView = view;
-        this.innerModel = model;
-        
-        model.init();
-        model.addEventListener('message',(event)=> { this.onGetMessage(event) });
+class ChatController {
+    constructor(view, model) {
+      this.innerView = view;
+      this.innerModel = model;
+  
+      this.innerView.addEventListener('sendUserA', async(event) => {
+        const message = event.detail.message;
+        await this.sendMessage('UserA', message);
+      });
+  
+      this.innerView.addEventListener('sendUserB', async(event) => {
+        const message = event.detail.message;
+        await this.sendMessage('UserB', message);
+      });
+  
+    }
+  
+    sendMessage(user, message) {
+      let key = localStorage.getItem("key"); 
+      let chatData = 
+      {
+        "originID":user,
+        "body": message,
+        "key": key
+				}
+      this.innerModel.sendMessage(chatData);
     }
 
-async onGetMessage(event)
-{
-    let message = await event.detail.message;
-
-    this.innerView.addReplyMessageOnChat(message);
-}
-
-async onSendMessage(message)
-{
-    let response = await this.innerModel.sendMessage(message);
-
-    return response;
-}
-    proposeChat(userTarget)
+    getMessage() 
     {
-        this.innerModel.proposeChat(userTarget);
+
+      return this.innerModel.getMessage();
     }
-
-    saveInLocalStorage(key,data)
-    {
-        localStorage.setItem(key, JSON.stringify(data));
-    }
-    getDataInLocalStorage(key)
-    {
-        // Para recuperar el objeto del localStorage
-        const sessionData = localStorage.getItem(key);
-
-        // Convierte la cadena JSON de nuevo a un objeto JavaScript
-        const data = JSON.parse(sessionData);
-
-        return data;
-    }
-}
-
-export {ChatController};
+  }
+  
+  export { ChatController };
+  

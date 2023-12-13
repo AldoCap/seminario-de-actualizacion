@@ -1,116 +1,94 @@
 
-
-class ChatModel extends EventTarget
-{
-    constructor()
+import { encryptMessage,decryptMessage } from "../utils/encrypting.js";
+class ChatModel {
+    constructor() 
     {
-        super();
-        this.sharedKey = undefined;
-        this.activeChat = undefined;
-        this.sessionData = undefined;
-  
+     this.getSharedKey(); 
+    this.sharedKey = undefined;
     }
-    init()
+
+    async sendMessage(message) 
     {
-        console.log('init setInterval');
+        try {
+            message.body = await encryptMessage(message.body,this.sharedKey);
+            let requestMetadata = {
+                method: "POST",
+                body:JSON.stringify(message),
+              };
+            const   response = await fetch('http://127.0.0.1:3000/sendMessage', requestMetadata);
+            //this.getMessage()
+          if (!response.ok) {
+            throw new Error('Error al enviar el mensaje al servidor');
+          }
 
-        setInterval(() =>
-        {
-            this.getMessage(this.activeChat);
-        }, 5000);
-
-        setInterval(()=>
-        {
-            this.getchatProposals();
-        },5000)
-
-    }
-    async getMessage(chatID)
-    {
-
-        let fetchData = 
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'userid': sessionData.userID,
-            },
-            body: JSON.stringify(chatID), 
-        };
-
-        let request = await fetch( 'http://localhost:3000/getMessage',fetchData );
-
-        let response = await request.json();
-
-        for(let message of response)
-        {
-            const ivArray = new Uint8Array(Object.values(message.body['iv']));
-            const dataArray = new Uint8Array(Object.values(message.body['data']));
-
-            const ivBuffer = ivArray.buffer;
-            const dataBuffer = dataArray.buffer;
-
-            message.body = decryptMessage({ iv: ivBuffer, data: dataBuffer }, this.sharedKey)
-
-            this.dispatchEvent(new CustomEvent('message',{detail: {message}}));
+        } catch (error) {
+          console.error('Error al enviar el mensaje al servidor:', error);
+        
         }
+      }
+      async getMessage() 
+      {
+          try {
+              
+              let requestMetadata = {
+                  method: "POST",
+                };
+              const   response = await fetch('http://127.0.0.1:3000/getMessage',requestMetadata);
+              let request = await response.json();
+             
+            if (!response.ok) {
+              throw new Error('Error al enviar el mensaje al servidor');
 
-        return response;
-    }
-    async sendMessage(message)
-    {
-        
-        let fetchData = 
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'userid': sessionData.userID,
-            },
-            body: JSON.stringify({message: await encryptMessage(message,this.sharedKey),chatID: this.activeChat}), 
-        };
+            }else{
 
-        let request = await fetch( 'http://localhost:3000/sendMessage',fetchData );
+              for(let message of request)
+              {
+                  const ivArray = new Uint8Array(Object.values(message.body['iv']));
+                  const dataArray = new Uint8Array(Object.values(message.body['data']));
+      
+                  const ivBuffer = ivArray.buffer;
+                  const dataBuffer = dataArray.buffer;
+                  
+                  message.body = await decryptMessage({ iv: ivBuffer, data: dataBuffer }, this.sharedKey)
+                 
+              }
 
-        let response = await request.json();
-        
-        return response;
-    }
-   
-    async getSharedKey()
-    {
-        let fetchData = 
-        { 
-            method: 'GET', 
-            headers: 
-            {
-                'Content-Type': 'application/json',
+              return request; 
             }
+            
+          } catch (error) {
+            console.error('Error al enviar el mensaje al servidor:', error);
+          
+          }
         }
-
-        let request = await fetch( 'http://localhost:8080/getSharedKey',fetchData );
-
-        let response = await request.json();
-
-        this.sharedKey = response;
-
-        return response;
-    }
-    
-    saveInLocalStorage(key,data)
+        
+    async getSharedKey() 
     {
-        localStorage.setItem(key, JSON.stringify(data));
+      try {
+          
+          let requestMetadata = {
+              method: "POST",
+            };
+          const response = await fetch('http://127.0.0.1:3000/getSharedKey',requestMetadata);
+          let request = await response.json();
+
+          this.sharedKey = request;
+          this.saveInLocalStorage(this.sharedKey); 
+        
+      } catch (error) {
+        console.error('Error al enviar el mensaje al servidor:', error);
+      
+      }
     }
-    getDataInLocalStorage(key)
+  
+    saveInLocalStorage(key) 
     {
-        // Para recuperar el objeto del localStorage
-        const sessionData = localStorage.getItem(key);
-
-        // Convierte la cadena JSON de nuevo a un objeto JavaScript
-        const data = JSON.parse(sessionData);
-
-        return data;
+      localStorage.setItem("key", JSON.stringify(key));
+      
     }
-}
-
-export {ChatModel};
+  
+  }
+  
+  export { ChatModel };
+  
+  

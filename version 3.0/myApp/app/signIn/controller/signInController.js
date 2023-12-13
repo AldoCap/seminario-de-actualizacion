@@ -30,14 +30,12 @@ class signInController{
 
     async onSignInButtonClick(event)
     {
-        this.InData = this.innerView.signInData(); 
+        this.InData = this.innerView.signInData();  
  
-        if (this.innerModel.FileUploaderToServer(this.InData)=== "true")
+        if (await this.innerModel.FileUploaderToServer(this.InData) !== false)
         {
             window.dispatchEvent(new CustomEvent('user-signed-in'));
 
-        }else{
-            window.dispatchEvent(new CustomEvent('user-signed-in'));
         }
     }
 
